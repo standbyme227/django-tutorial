@@ -1,10 +1,10 @@
 from django.http import Http404, HttpResponse
-from django.shortcuts import render, get_object_or_404
+from django.shortcuts import render, get_object_or_404, redirect
 
 # from django.http import HttpResponse
 # from django.template import loader
 
-from polls.models import Question
+from polls.models import Question, Choice
 
 
 def index(request):
@@ -45,4 +45,10 @@ def results(request, question_id):
 
 
 def vote(request, question_id):
-    return HttpResponse("You're coting on quesion %s" % question_id)
+
+    choice_pk = request.POST['choice']
+    choice = Choice.objects.get(pk=choice_pk)
+    choice.vote +=1
+    choice.save()
+
+    return redirect('polls:results', question_id=question_id)
